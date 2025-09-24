@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './Login.css'
 
-function Login() {
+function Login({ onToggleSignUp }) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -75,7 +75,16 @@ function Login() {
         </form>
 
         <div className="login-footer">
-          <p>Don't have an account? <a href="#" className="signup-link">Sign up</a></p>
+          <p>
+            Don't have an account?
+            <button
+              type="button"
+              onClick={onToggleSignUp}
+              className="signup-link"
+            >
+              Sign up
+            </button>
+          </p>
         </div>
       </div>
     </div>

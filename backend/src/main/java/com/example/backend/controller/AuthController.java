@@ -4,12 +4,12 @@ import com.example.backend.dto.SignUpRequest;
 import com.example.backend.dto.LoginRequest;
 import com.example.backend.dto.ApiResponse;
 import com.example.backend.service.AuthService;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController

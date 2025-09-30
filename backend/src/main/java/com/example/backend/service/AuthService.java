@@ -45,18 +45,20 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setNickname(request.getNickname());
         user.setProvider(User.AuthProvider.LOCAL);
-        user.setIsEmailVerified(false);
+        user.setIsEmailVerified(true); // 임시로 이메일 인증 완료 상태로 설정
         user.setIsActive(true);
 
-        String verificationToken = UUID.randomUUID().toString();
-        user.setEmailVerificationToken(verificationToken);
-        user.setEmailVerificationTokenExpiresAt(
-            LocalDateTime.now().plusHours(emailVerificationExpirationHours)
-        );
+        // 이메일 인증 토큰 설정 (필요시 나중에 활성화)
+        // String verificationToken = UUID.randomUUID().toString();
+        // user.setEmailVerificationToken(verificationToken);
+        // user.setEmailVerificationTokenExpiresAt(
+        //     LocalDateTime.now().plusHours(emailVerificationExpirationHours)
+        // );
 
         userRepository.save(user);
 
-        emailService.sendEmailVerification(user.getEmail(), verificationToken);
+        // 이메일 전송 임시 비활성화 (SMTP 설정 후 활성화)
+        // emailService.sendEmailVerification(user.getEmail(), verificationToken);
     }
 
     public String login(LoginRequest request) {

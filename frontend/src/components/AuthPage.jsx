@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Login from './Login'
 import SignUp from './SignUp'
 
-function AuthPage() {
+function AuthPage({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true)
 
   const toggleAuthMode = () => {
@@ -12,7 +12,7 @@ function AuthPage() {
   return (
     <>
       {isLogin ? (
-        <Login onToggleSignUp={toggleAuthMode} />
+        <Login onToggleSignUp={toggleAuthMode} onLogin={onLogin} />
       ) : (
         <SignUp onToggleLogin={toggleAuthMode} />
       )}

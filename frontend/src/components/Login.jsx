@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import './Login.css'
 
-function Login({ onToggleSignUp }) {
+function Login({ onToggleSignUp, onLogin }) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     rememberMe: false
   })
+  const [error, setError] = useState('')
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -14,11 +15,37 @@ function Login({ onToggleSignUp }) {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }))
+    if (error) setError('')
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Login attempt:', formData)
+    setError('')
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        }),
+      })
+
+      const data = await response.json()
+      console.log('로그인 응답:', data)
+
+      if (response.ok && data.success) {
+        onLogin(data.data) // 토큰 전달
+      } else {
+        setError(data.message || '로그인에 실패했습니다.')
+      }
+    } catch (error) {
+      console.error('로그인 실패:', error)
+      setError('로그인 중 오류가 발생했습니다.')
+    }
   }
 
   return (
@@ -30,6 +57,8 @@ function Login({ onToggleSignUp }) {
         </div>
 
         <form onSubmit={handleSubmit} className="login-form">
+          {error && <div className="error-message general-error">{error}</div>}
+
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input

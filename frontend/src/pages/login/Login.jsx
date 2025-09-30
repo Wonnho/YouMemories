@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './Login.css'
 
-function Login({ onToggleSignUp, onLogin }) {
+function Login() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -38,7 +40,8 @@ function Login({ onToggleSignUp, onLogin }) {
       console.log('로그인 응답:', data)
 
       if (response.ok && data.success) {
-        onLogin(data.data) // 토큰 전달
+        localStorage.setItem('token', data.data)
+        navigate('/')
       } else {
         setError(data.message || '로그인에 실패했습니다.')
       }
@@ -108,7 +111,7 @@ function Login({ onToggleSignUp, onLogin }) {
             Don't have an account?
             <button
               type="button"
-              onClick={onToggleSignUp}
+              onClick={() => navigate('/signup')}
               className="signup-link"
             >
               Sign up

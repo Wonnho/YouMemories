@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './MyPage.css'
 
-function MyPage({ onBack }) {
+function MyPage() {
+  const navigate = useNavigate()
   const [postits, setPostits] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -66,7 +68,7 @@ function MyPage({ onBack }) {
   return (
     <div className="mypage-container">
       <div className="mypage-header">
-        <button onClick={onBack} className="back-button">
+        <button onClick={() => navigate('/')} className="back-button">
           ← 돌아가기
         </button>
         <h1>My Page</h1>

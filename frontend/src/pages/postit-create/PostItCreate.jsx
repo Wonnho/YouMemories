@@ -1,7 +1,10 @@
 import { useState } from 'react'
-import './PostIt.css'
+import { useNavigate, useParams } from 'react-router-dom'
+import './PostItCreate.css'
 
-function PostIt({ onBack }) {
+function PostItCreate() {
+  const navigate = useNavigate()
+  const { timepaperId } = useParams()
   const [content, setContent] = useState('')
   const [images, setImages] = useState([])
   const [previewUrls, setPreviewUrls] = useState([])
@@ -68,10 +71,10 @@ function PostIt({ onBack }) {
   return (
     <div className="postit-container">
       <div className="postit-header">
-        <button onClick={onBack} className="back-button">
+        <button onClick={() => navigate(-1)} className="back-button">
           ← 돌아가기
         </button>
-        <h1>Rolling Paper 생성</h1>
+        <h1>포스트잇 작성</h1>
         <div></div>
       </div>
 
@@ -132,4 +135,4 @@ function PostIt({ onBack }) {
   )
 }
 
-export default PostIt
+export default PostItCreate

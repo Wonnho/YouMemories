@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './SignUp.css'
 import TermsOfService from './TermsOfService'
 import PrivacyPolicy from './PrivacyPolicy'
 
-function SignUp({ onToggleLogin }) {
+function SignUp() {
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -155,7 +157,7 @@ function SignUp({ onToggleLogin }) {
 
       if (response.ok && data.success) {
         alert('회원가입이 완료되었습니다. 이메일을 확인하여 인증을 완료해주세요.')
-        onToggleLogin() // 로그인 페이지로 이동
+        navigate('/login') // 로그인 페이지로 이동
       } else {
         setErrors({ general: data.message || '회원가입에 실패했습니다.' })
       }
@@ -327,7 +329,7 @@ function SignUp({ onToggleLogin }) {
             Already have an account?
             <button
               type="button"
-              onClick={onToggleLogin}
+              onClick={() => navigate('/login')}
               className="login-link"
             >
               Sign in

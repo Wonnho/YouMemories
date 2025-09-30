@@ -151,12 +151,13 @@ function SignUp({ onToggleLogin }) {
       })
 
       const data = await response.json()
+      console.log('회원가입 응답:', data)
 
-      if (data.success) {
+      if (response.ok && data.success) {
         alert('회원가입이 완료되었습니다. 이메일을 확인하여 인증을 완료해주세요.')
         onToggleLogin() // 로그인 페이지로 이동
       } else {
-        setErrors({ general: data.message })
+        setErrors({ general: data.message || '회원가입에 실패했습니다.' })
       }
     } catch (error) {
       console.error('회원가입 실패:', error)

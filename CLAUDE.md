@@ -173,6 +173,135 @@ npm run test:coverage      # Run tests with coverage
 - **Database Migrations**: Version controlled schema changes
 - **Deployment**: Automated CI/CD pipeline
 
+## Development Progress
+
+### Completed Features (as of 2025-09-30)
+
+#### Authentication System ✅
+- **User Registration (SignUp)**
+  - Email validation and duplicate check
+  - Nickname validation and duplicate check
+  - Password strength validation (8+ chars, special characters)
+  - Terms of Service and Privacy Policy agreement
+  - Email verification flow
+  - Location: `frontend/src/components/SignUp.jsx`
+
+- **User Login**
+  - Email/password authentication
+  - JWT token-based authentication
+  - Remember me functionality
+  - Kakao social login integration
+  - Location: `frontend/src/components/Login.jsx`
+
+- **Backend Authentication APIs**
+  - POST `/api/auth/signup` - User registration
+  - POST `/api/auth/login` - User login
+  - GET `/api/auth/verify-email` - Email verification
+  - GET `/api/auth/check-email` - Email availability check
+  - GET `/api/auth/check-nickname` - Nickname availability check
+  - GET `/api/auth/kakao` - Kakao OAuth redirect
+  - GET `/api/auth/kakao/callback` - Kakao OAuth callback
+  - Location: `backend/src/main/java/com/example/backend/controller/AuthController.java`
+
+#### Main Application Pages ✅
+- **Main Page**
+  - Two main action buttons: "Rolling Paper 생성" and "My Page"
+  - Logout functionality
+  - Responsive gradient design
+  - Location: `frontend/src/components/MainPage.jsx`
+
+- **PostIt Page (Rolling Paper Creation)**
+  - Image upload with preview (multiple images)
+  - Image removal functionality
+  - Text content input (textarea with character count)
+  - Form validation
+  - Location: `frontend/src/components/PostIt.jsx`
+
+- **My Page**
+  - Display list of user's PostIt cards
+  - Image preview (up to 3 images per card)
+  - Content preview (3 lines max)
+  - Delete functionality for each PostIt
+  - Empty state UI
+  - Loading and error states
+  - Location: `frontend/src/components/MyPage.jsx`
+
+#### Frontend Routing ✅
+- State-based routing system in App.jsx
+- Routes: `/` (auth), `/main`, `/postit`, `/mypage`
+- Token persistence in localStorage
+- Auto-login on page refresh
+- Location: `frontend/src/App.jsx`
+
+#### Database Configuration ✅
+- MySQL 8.0 integration with Docker
+- User entity model with authentication fields
+- JPA/Hibernate configuration
+- Spring Security configuration
+- Location: `backend/src/main/java/com/example/backend/model/User.java`
+
+### API Endpoints Summary
+
+#### Authentication
+- `POST /api/auth/signup` - Register new user
+- `POST /api/auth/login` - User login
+- `GET /api/auth/verify-email?token={token}` - Verify email
+- `GET /api/auth/check-email?email={email}` - Check email availability
+- `GET /api/auth/check-nickname?nickname={nickname}` - Check nickname availability
+- `GET /api/auth/kakao` - Kakao OAuth login
+- `GET /api/auth/kakao/callback?code={code}` - Kakao OAuth callback
+
+#### PostIt (To be implemented)
+- `POST /api/postit` - Create new PostIt
+- `GET /api/postit/my-postits` - Get user's PostIt list
+- `DELETE /api/postit/{id}` - Delete PostIt
+
+### Next Steps / TODO
+- [ ] Implement PostIt backend API endpoints
+- [ ] Implement image upload/storage service (AWS S3 or local storage)
+- [ ] Add PostIt detail view page
+- [ ] Implement PostIt edit functionality
+- [ ] Add pagination for PostIt list
+- [ ] Implement search and filter for PostIt
+- [ ] Add sharing functionality (share rolling paper with others)
+- [ ] Implement collaborative editing features
+- [ ] Add email service for verification emails
+- [ ] Add password recovery functionality
+- [ ] Implement Redis caching for session management
+- [ ] Add unit and integration tests
+- [ ] Implement CI/CD pipeline
+- [ ] Deploy to production environment
+
+### Database Schema
+
+#### User Table
+```sql
+- id: BIGINT (Primary Key)
+- email: VARCHAR(255) (Unique, Not Null)
+- password: VARCHAR(255) (Encrypted, Not Null)
+- nickname: VARCHAR(20) (Unique, Not Null)
+- emailVerified: BOOLEAN (Default: false)
+- createdAt: TIMESTAMP
+- updatedAt: TIMESTAMP
+```
+
+#### PostIt Table (To be implemented)
+```sql
+- id: BIGINT (Primary Key)
+- userId: BIGINT (Foreign Key -> User)
+- content: TEXT
+- createdAt: TIMESTAMP
+- updatedAt: TIMESTAMP
+```
+
+#### PostItImage Table (To be implemented)
+```sql
+- id: BIGINT (Primary Key)
+- postitId: BIGINT (Foreign Key -> PostIt)
+- imageUrl: VARCHAR(500)
+- createdAt: TIMESTAMP
+```
+
 ---
 
-*This document should be updated as the project evolves. Last updated: 2025-09-29*
+*This document should be updated as the project evolves. Last updated: 2025-09-30*

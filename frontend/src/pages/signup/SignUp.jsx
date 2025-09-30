@@ -52,6 +52,16 @@ function SignUp() {
     setIsCheckingEmail(true)
     try {
       const response = await fetch(`/api/auth/check-email?email=${encodeURIComponent(formData.email)}`)
+
+      if (!response.ok) {
+        throw new Error(`서버 응답 오류: ${response.status}`)
+      }
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('백엔드 서버가 실행되지 않았습니다. Spring Boot 서버를 먼저 시작해주세요.')
+      }
+
       const data = await response.json()
       setEmailAvailable(data.success)
       if (!data.success) {
@@ -59,6 +69,7 @@ function SignUp() {
       }
     } catch (error) {
       console.error('이메일 중복 확인 실패:', error)
+      setErrors(prev => ({ ...prev, email: error.message }))
     } finally {
       setIsCheckingEmail(false)
     }
@@ -72,6 +83,16 @@ function SignUp() {
     setIsCheckingNickname(true)
     try {
       const response = await fetch(`/api/auth/check-nickname?nickname=${encodeURIComponent(formData.nickname)}`)
+
+      if (!response.ok) {
+        throw new Error(`서버 응답 오류: ${response.status}`)
+      }
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('백엔드 서버가 실행되지 않았습니다. Spring Boot 서버를 먼저 시작해주세요.')
+      }
+
       const data = await response.json()
       setNicknameAvailable(data.success)
       if (!data.success) {
@@ -79,6 +100,7 @@ function SignUp() {
       }
     } catch (error) {
       console.error('닉네임 중복 확인 실패:', error)
+      setErrors(prev => ({ ...prev, nickname: error.message }))
     } finally {
       setIsCheckingNickname(false)
     }
@@ -152,6 +174,15 @@ function SignUp() {
         }),
       })
 
+      if (!response.ok) {
+        throw new Error(`서버 응답 오류: ${response.status}`)
+      }
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('백엔드 서버가 실행되지 않았습니다. Spring Boot 서버(포트 8080)를 먼저 시작해주세요.')
+      }
+
       const data = await response.json()
       console.log('회원가입 응답:', data)
 
@@ -163,7 +194,7 @@ function SignUp() {
       }
     } catch (error) {
       console.error('회원가입 실패:', error)
-      setErrors({ general: '회원가입 중 오류가 발생했습니다.' })
+      setErrors({ general: error.message || '회원가입 중 오류가 발생했습니다.' })
     }
   }
 

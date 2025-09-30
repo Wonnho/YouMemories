@@ -36,6 +36,15 @@ function Login() {
         }),
       })
 
+      if (!response.ok) {
+        throw new Error(`서버 응답 오류: ${response.status}`)
+      }
+
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('백엔드 서버가 실행되지 않았습니다. Spring Boot 서버(포트 8080)를 먼저 시작해주세요.')
+      }
+
       const data = await response.json()
       console.log('로그인 응답:', data)
 
@@ -47,7 +56,7 @@ function Login() {
       }
     } catch (error) {
       console.error('로그인 실패:', error)
-      setError('로그인 중 오류가 발생했습니다.')
+      setError(error.message || '로그인 중 오류가 발생했습니다.')
     }
   }
 

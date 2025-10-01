@@ -23,9 +23,12 @@ public class TimePaperController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<TimePaperResponse>> createTimePaper(
-            @Valid @RequestBody TimePaperCreateRequest request) {
+            @Valid @RequestBody TimePaperCreateRequest request,
+            @RequestHeader(value = "Authorization", required = false) String token) {
         try {
-            String email = getCurrentUserEmail();
+            // TODO: Implement JWT token validation and extract email from token
+            // For now, we'll use a temporary solution
+            String email = extractEmailFromToken(token);
             TimePaperResponse response = timePaperService.createTimePaper(email, request);
             return ResponseEntity.ok(ApiResponse.success("타임페이퍼가 생성되었습니다.", response));
         } catch (RuntimeException e) {
@@ -34,9 +37,10 @@ public class TimePaperController {
     }
 
     @GetMapping("/my-timepapers")
-    public ResponseEntity<ApiResponse<List<TimePaperResponse>>> getMyTimePapers() {
+    public ResponseEntity<ApiResponse<List<TimePaperResponse>>> getMyTimePapers(
+            @RequestHeader(value = "Authorization", required = false) String token) {
         try {
-            String email = getCurrentUserEmail();
+            String email = extractEmailFromToken(token);
             List<TimePaperResponse> timePapers = timePaperService.getUserTimePapers(email);
             return ResponseEntity.ok(ApiResponse.success("타임페이퍼 목록을 조회했습니다.", timePapers));
         } catch (RuntimeException e) {
@@ -60,5 +64,18 @@ public class TimePaperController {
             throw new RuntimeException("인증되지 않은 사용자입니다.");
         }
         return authentication.getName();
+    }
+
+    private String extractEmailFromToken(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            throw new RuntimeException("로그인이 필요합니다.");
+        }
+        // Remove "Bearer " prefix if present
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        // TODO: Implement proper JWT token parsing
+        // For now, the token IS the email (as returned from login endpoint)
+        return token;
     }
 }

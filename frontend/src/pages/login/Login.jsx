@@ -36,10 +36,6 @@ function Login() {
         }),
       })
 
-      if (!response.ok) {
-        throw new Error(`서버 응답 오류: ${response.status}`)
-      }
-
       const contentType = response.headers.get('content-type')
       if (!contentType || !contentType.includes('application/json')) {
         throw new Error('백엔드 서버가 실행되지 않았습니다. Spring Boot 서버(포트 8080)를 먼저 시작해주세요.')

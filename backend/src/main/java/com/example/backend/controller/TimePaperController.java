@@ -4,6 +4,7 @@ import com.example.backend.dto.ApiResponse;
 import com.example.backend.dto.TimePaperCreateRequest;
 import com.example.backend.dto.TimePaperResponse;
 import com.example.backend.service.TimePaperService;
+import com.example.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -20,15 +21,14 @@ import java.util.List;
 public class TimePaperController {
 
     private final TimePaperService timePaperService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping
     public ResponseEntity<ApiResponse<TimePaperResponse>> createTimePaper(
             @Valid @RequestBody TimePaperCreateRequest request,
-            @RequestHeader(value = "Authorization", required = false) String token) {
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
-            // TODO: Implement JWT token validation and extract email from token
-            // For now, we'll use a temporary solution
-            String email = extractEmailFromToken(token);
+            String email = extractEmailFromToken(authHeader);
             TimePaperResponse response = timePaperService.createTimePaper(email, request);
             return ResponseEntity.ok(ApiResponse.success("타임페이퍼가 생성되었습니다.", response));
         } catch (RuntimeException e) {
@@ -38,9 +38,9 @@ public class TimePaperController {
 
     @GetMapping("/my-timepapers")
     public ResponseEntity<ApiResponse<List<TimePaperResponse>>> getMyTimePapers(
-            @RequestHeader(value = "Authorization", required = false) String token) {
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
-            String email = extractEmailFromToken(token);
+            String email = extractEmailFromToken(authHeader);
             List<TimePaperResponse> timePapers = timePaperService.getUserTimePapers(email);
             return ResponseEntity.ok(ApiResponse.success("타임페이퍼 목록을 조회했습니다.", timePapers));
         } catch (RuntimeException e) {
@@ -58,24 +58,32 @@ public class TimePaperController {
         }
     }
 
-    private String getCurrentUserEmail() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("인증되지 않은 사용자입니다.");
-        }
-        return authentication.getName();
-    }
-
-    private String extractEmailFromToken(String token) {
-        if (token == null || token.trim().isEmpty()) {
+    /**
+     * Authorization 헤더에서 JWT 토큰을 추출하고 이메일을 반환
+     */
+    private String extractEmailFromToken(String authHeader) {
+        if (authHeader == null || authHeader.trim().isEmpty()) {
             throw new RuntimeException("로그인이 필요합니다.");
         }
-        // Remove "Bearer " prefix if present
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
+
+        // "Bearer " 접두사 제거
+        String token = authHeader;
+        if (authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
         }
-        // TODO: Implement proper JWT token parsing
-        // For now, the token IS the email (as returned from login endpoint)
-        return token;
+
+        try {
+            // JWT 토큰에서 이메일 추출
+            String email = jwtUtil.extractEmail(token);
+
+            // 토큰 유효성 검증
+            if (!jwtUtil.validateToken(token, email)) {
+                throw new RuntimeException("유효하지 않은 토큰입니다.");
+            }
+
+            return email;
+        } catch (Exception e) {
+            throw new RuntimeException("토큰 인증에 실패했습니다: " + e.getMessage());
+        }
     }
 }

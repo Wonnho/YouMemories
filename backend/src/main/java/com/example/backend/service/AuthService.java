@@ -4,6 +4,7 @@ import com.example.backend.dto.LoginRequest;
 import com.example.backend.dto.SignUpRequest;
 import com.example.backend.model.User;
 import com.example.backend.repository.UserRepository;
+import com.example.backend.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final JwtUtil jwtUtil;
 
     @Value("${app.email-verification.expiration-hours:24}")
     private int emailVerificationExpirationHours;
@@ -69,8 +71,8 @@ public class AuthService {
             throw new RuntimeException("이메일 또는 비밀번호가 올바르지 않습니다.");
         }
 
-        // TODO: JWT 토큰 생성 및 반환
-        return "temporary-token-" + user.getId();
+        // JWT 토큰 생성 및 반환
+        return jwtUtil.generateToken(user.getEmail(), user.getId(), user.getNickname());
     }
 
     @Transactional
